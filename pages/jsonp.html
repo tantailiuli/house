@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>JSONP</title>
+</head>
+<body>
+<!-- 	<script>
+		// function jsonpCallback(data)//{创建与数据被包方法名相同的jsonpCallback方法，一旦获取到数据，数据被包的方法就执行此方法
+		// 	console.log(data)
+		// }
+		var getJSONP = function(){
+			var id = 0,
+				body = document.body;
+			return function(url,cb){
+				var script = document.createElement("script");
+				window["jsonpCallback_" + id] = cb;
+				script.src = [url, "&id=", id].join("");
+				body.appendChild(script);
+				id++;
+			}
+		}()
+		getJSONP("http://127.0.0.1:23333/api/get_banner/home?type=jsonp",function(data){
+			console.log(data,"轮播图");
+		});/*到此地址获取被jsonpCallback方法包起来的json数据*/
+		getJSONP("http://127.0.0.1:23333/api/test?type=jsonp",function(data){
+			console.log(data,"测试");
+		});
+	</script> -->
+<!-- 	<script>
+		var ajax = function(){
+			var id = 0,
+				body = document.body;
+			return function(options){
+				id++;//自增获取独一无二的id
+				function serialize(obj){//创建serialize方法使键值对变成等式{a:1,b:2}==>a=1&b=2
+					var result = [],
+						a;
+					for(a in obj){
+						result.push([a, "=", obj[a]].join(""));
+					}
+					return result.join("&");
+				}
+				var jsonp = options.jsonp,
+					url = options.url,
+					data = options.data,
+					dataType = options.dataType || "json",
+					success = (options.success || function(){}).bind(options),
+					error = (options.error || function(){}).bind(options);
+				if(jsonp){
+					var script = document.createElement("script"),
+						data = serialize(data);
+					script.src = [url, "?type=jsonp&id=", id, [["&", data].join(""), ""][+!data.length]].join("");//地址的拼接，如：http://127.0.0.1:23333/api/get_banner/home?type=jsonp&id=1&a=1
+					window[["jsonpCallback_", id].join("")] = [
+						success,
+						function(data){
+							success(eval("(" + data + ")"));//面对有可能后台数据在json格式外面又包了层'';
+						}
+					][+(dataType === "json")];
+					body.appendChild(script);
+					return;
+				}
+				var xhr = new XMLHttpRequest,
+					type = options.type || "get",
+					headers = options.headers || {
+						"Content-Type": "application/x-www-form-urlencoded"
+					},
+					a;
+				xhr.onreadystatechange = function(){
+					if(xhr.readyState === 4){
+						if(xhr.status >= 200 && xhr.status < 300){
+							success(dataType === "json" ? eval("("+ xhr.responseText + ")") : xhr.responseText);
+						}else{
+							error(xhr.responseText);
+						}
+					}
+				};
+				xhr.open(type, [url, "?", ["", serialize(data)][+(type === "get")]].join(""), options.async || 1);
+				for(a in headers){
+					xhr.setRequestHeader(a, headers[a]);
+				}
+				xhr.send([serialize(data), null][+(type === "get")]);
+			};
+		}();
+		ajax({
+			type: "get",// optional
+			url: "http://127.0.0.1:23333/api/get_banner/home",
+			headers: {
+				"Content-Type": "application/x-www-form-urlencoded"
+			},// optional
+			async: 1,// optional
+			data: {
+				a: 1,
+				b: 2
+			},// optional
+			dataType: "text",// optional
+			jsonp: 1,// optional
+			success: function(data){
+				console.log(data);
+			},// optional
+			error: function(err){
+				console.log(err);
+			}// optional
+		});
+	</script> -->
+	<script>
+	const _fetch = (() => {
+		let id = 0;
+		const body = document.body;
+		const serialize = obj => Object.keys(obj).reduce((result, curr) => {
+			result.push(`${curr}=${obj[curr]}`);
+			return result;
+		}, []).join("&");
+		const format = data => ({
+			text: () => Promise.resolve(JSON.stringify(data)),
+			json: () => Promise.resolve(JSON.parse(JSON.stringify(data)))
+		});
+		return ({type = "get", url, data, dataType = "json", async, jsonp, headers = [{}, {
+			"Content-Type": "application/x-www-form-urlencoded"
+		}][+(type === "post")], success = function(){}, error = function(){}}) => {
+			id++;
+			return new Promise((resolve, reject) => {
+				if(jsonp){
+					const script = document.createElement("script");
+					data = serialize(data);
+					script.src = `${url}?type=jsonp&id=${id}${[`&${data}`, ""][+!data.length]}`;
+					window[["jsonpCallback_", id].join("")] = data => {
+						resolve(format(data));
+					};
+					return body.appendChild(script);
+				}
+				const xhr = new XMLHttpRequest;
+				xhr.onreadystatechange = () => {
+					if(xhr.readyState === 4){
+						if(xhr.status >= 200 && xhr.status < 300){
+							resolve(format(xhr.responseText));
+						}else{
+							reject(xhr.responseText);
+						}
+					}
+				};
+				xhr.open(type, `${url}?${["", serialize(data)][+(type === "get")]}`, async);
+				for(let a in headers){
+					xhr.setRequestHeader(a, headers[a]);
+				}
+				xhr.send([serialize(data), null][+(type === "get")]);
+			});
+		};
+	})();
+	_fetch({
+		type: "get",// optional
+		url: "http://127.0.0.1:23333/api/get_banner/home",
+		headers: {
+			"Content-Type": "application/x-www-form-urlencoded"
+		},// optional
+		async: 1,// optional
+		data: {
+			a: 1,
+			b: 2
+		},// optional
+		dataType: "text",// optional
+		jsonp: 1,// optional
+	}).then(({text}) => text()).then(data => console.log(data));
+
+
+	</script>
+</body>
+</html>
