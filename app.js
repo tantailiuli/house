@@ -7,7 +7,6 @@ import {l,createHTML} from "./utils";/*模块导入"./utils.js"*/
 
 express()
 	.use(express.static("./static"))/*.use中间件引入静态资源"./static"文件夹*/
-	.use(express.static("./dev/dist"))
 	.use(session({
 		secret: "house",
 		resave: 1,

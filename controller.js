@@ -3,7 +3,7 @@ import {Router} from "express";
 import {urlencoded} from "body-parser";
 import multer from "multer";
 import {SERVER_CONFIG} from "./config";
-import {readFileAsync} from "./utils"
+import {readFileAsync} from "./utils";
 const {
 	host,
 	port
@@ -207,6 +207,6 @@ router
 router
 	.route("*")
 	.get(async (req,res) =>{
-		res.send(await readFileAsync("./dev/dist/index.html"))
+		res.send(await readFileAsync("./pages/index.html"))
 	});
 export default router;
