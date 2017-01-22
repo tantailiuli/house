@@ -23,12 +23,12 @@ module.exports = {
     assetsPublicPath: '/',
     proxyTable: {
         "/api/": {
-            target: "http://127.0.0.1:23333",
+            target: "http://127.0.0.1:16100",
             changeOrigin: true,
             cookieDomainRewrite: "http://127.0.0.1:8888"
         },
         "/images/": {
-            target: "http://127.0.0.1:23333",
+            target: "http://127.0.0.1:16100",
             changeOrigin: true
         }
     },
