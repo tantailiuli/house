@@ -1,4 +1,4 @@
-import {readFile} from "fs";/*获取fs框架中的readFile方法*/
+    import {readFile} from "fs";/*获取fs框架中的readFile方法*/
 export const l = function(){/*简化console.log()方法*/
 	return console.log(...arguments);
 };
