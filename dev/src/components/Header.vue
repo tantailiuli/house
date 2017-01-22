@@ -1,4 +1,5 @@
 <style lang="stylus" scoped>
+	$orange=#ff6932
 	header
 		position relative
 		height 2.25rem
@@ -6,15 +7,15 @@
 		border-bottom 1px solid #ddd
 		text-align center
 		line-height @height
-	.icon
-		position absolute
-		top 50%
-		transform translateY(-50%) rotate(180deg)
-		&.back
-			left .5rem
-	span
-		font-size 1rem
-		color #333
+		.icon
+			position absolute
+			top 50%
+			transform translateY(-50%) rotate(180deg)
+			&.back
+				left .5rem
+		span
+			font-size 1rem
+			color $orange
 </style>
 <template>
 	<header>

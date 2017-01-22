@@ -27,7 +27,7 @@
   textarea
     resize none
   body
-    background-color #eee
+    background-color #efefef
   .withFooter
     padding-bottom 3.125rem
   .icon

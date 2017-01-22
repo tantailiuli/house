@@ -1,6 +1,5 @@
 <style lang="stylus" scoped>
-	$orange=#e63700
-	$lightOrange=$orange + 50
+	$orange=#ff6932
 	.banner
 		position relative
 		height 17.0625rem
